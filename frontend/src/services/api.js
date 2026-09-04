@@ -1,8 +1,10 @@
 import axios from 'axios';
 
 // With Vite proxy configured, /api is same-origin in development.
-// In production set VITE_API_URL to your deployed backend URL.
-const BASE_URL = import.meta.env.VITE_API_URL || '/api';
+// In production VITE_API_URL must point to the Render backend.
+// Normalise: always ensure the base URL ends with /api
+const _raw = import.meta.env.VITE_API_URL || '/api';
+const BASE_URL = _raw.endsWith('/api') ? _raw : _raw.replace(/\/$/, '') + '/api';
 
 /* ── Axios instance ── */
 const api = axios.create({
