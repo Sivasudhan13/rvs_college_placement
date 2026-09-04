@@ -5,13 +5,15 @@
 const sendToken = (user, statusCode, res) => {
   const token = user.getSignedJwtToken();
 
+  const cookieExpireDays = parseInt(process.env.JWT_COOKIE_EXPIRE) || 7;
+
   const cookieOptions = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
-    ),
+    expires:  new Date(Date.now() + cookieExpireDays * 24 * 60 * 60 * 1000),
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    // In production the frontend (Vercel) and backend (Render) are on different
+    // domains, so we need sameSite=none + secure=true for cross-site cookies
+    secure:   process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
   };
 
   res

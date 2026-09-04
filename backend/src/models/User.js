@@ -54,8 +54,10 @@ UserSchema.pre('save', async function () {
 
 /* ── Sign JWT ── */
 UserSchema.methods.getSignedJwtToken = function () {
-  return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE,
+  const secret  = process.env.JWT_SECRET  || 'fallback_dev_secret_change_in_prod';
+  const expires = process.env.JWT_EXPIRE  || '7d';   // safe default if env var missing
+  return jwt.sign({ id: this._id, role: this.role }, secret, {
+    expiresIn: expires,
   });
 };
 
