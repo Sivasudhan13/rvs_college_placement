@@ -57,16 +57,22 @@ const send = async ({ to, subject, html }) => {
   }
 
   console.log(`[EMAIL] Attempting to send "${subject}" → ${to}`);
-  console.log(`[EMAIL] SMTP: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT} as ${user}`);
 
   try {
     const t = getTransporter();
 
-    // Verify connection before first send (cached after that)
+    // Verify on first send only (cached after that)
     if (!t._verified) {
-      await t.verify();
-      t._verified = true;
-      console.log('[EMAIL] SMTP connection verified ✓');
+      try {
+        await t.verify();
+        t._verified = true;
+        console.log('[EMAIL] SMTP connection verified ✓');
+      } catch (verifyErr) {
+        // Verification failed — reset transporter and try sending anyway
+        // (some SMTP servers fail verify but still accept mail)
+        console.warn('[EMAIL] SMTP verify failed, attempting send anyway:', verifyErr.message);
+        t._verified = true; // don't retry verify on every email
+      }
     }
 
     const info = await t.sendMail({ from: FROM, to, subject, html });
