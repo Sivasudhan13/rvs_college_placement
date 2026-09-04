@@ -1,0 +1,12 @@
+export { default as HomePage } from './HomePage';
+export { default as LoginPage } from './LoginPage';
+export { default as RegistrationPage } from './RegistrationExample';
+export { default as DashboardPage }    from './DashboardPage';
+export { default as QuizPage }         from './QuizPage';
+export { default as AssessmentPage }   from './AssessmentPage';
+export { default as AptitudeHubPage }  from './AptitudeHubPage';
+export { default as QuizAttemptPage }  from './QuizAttemptPage';
+export { default as IDEPage }           from './IDEPage';
+export { default as TaskManagerPage }   from './TaskManagerPage';
+export { default as HRPrepPage }        from './HRPrepPage';
+export { default as CareerRoadmapPage } from './CareerRoadmapPage';

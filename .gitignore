@@ -1,0 +1,68 @@
+# ── OS ────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# ── Editor ────────────────────────────────
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+
+# ── Logs ──────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ── Dependencies ──────────────────────────
+node_modules/
+.pnp
+.pnp.js
+
+# ── Build output ──────────────────────────
+dist/
+dist-ssr/
+build/
+out/
+.output/
+
+# ── Environment / Secrets ─────────────────
+# NEVER commit these — use .env.example instead
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ── Runtime / temp ────────────────────────
+*.local
+*.pid
+*.seed
+*.pid.lock
+.cache/
+.tmp/
+tmp/
+temp/
+
+# ── Testing ───────────────────────────────
+coverage/
+.nyc_output/
+
+# ── Misc ──────────────────────────────────
+*.tgz
+*.tar.gz
+.node_repl_history

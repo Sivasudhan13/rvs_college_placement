@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0c5273;
+  --color-primary-dark: #094361;
+  --color-primary-darker: #073550;
+
+  --font-family-sans: Inter, system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  color: #1f2937;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}

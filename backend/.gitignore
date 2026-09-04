@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Environment — NEVER commit, use .env.example
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Build / runtime
+dist/
+.cache/
+*.pid
+
+# OS
+.DS_Store
+Thumbs.db
