@@ -73,9 +73,16 @@ const DashboardNavbar = ({ onMenuToggle }) => {
         </svg>
       </button>
 
-      {/* Avatar */}
-      <button className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-xs font-bold flex-shrink-0">
-        {user?.name?.[0]?.toUpperCase() || 'U'}
+      {/* Avatar → Profile */}
+      <button
+        onClick={() => navigate('/profile')}
+        className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-xs font-bold flex-shrink-0 hover:ring-2 hover:ring-primary/40 transition-all"
+        title="My Profile"
+      >
+        {user?.avatar
+          ? <img src={user.avatar} alt="profile" className="w-8 h-8 rounded-full object-cover"/>
+          : (user?.name?.[0]?.toUpperCase() || 'U')
+        }
       </button>
 
       {/* Dashboard active pill */}

@@ -60,6 +60,11 @@ import MockTestResultPage  from './pages/student/MockTestResultPage';
 import MockTestHistoryPage from './pages/student/MockTestHistoryPage';
 /* ── Notifications (student) ── */
 import NotificationsPage   from './pages/student/NotificationsPage';
+/* ── Profile ── */
+import ProfilePage            from './pages/ProfilePage';
+/* ── AI HR Interview ── */
+import LiveInterviewPage      from './pages/LiveInterviewPage';
+import InterviewHistoryPage   from './pages/InterviewHistoryPage';
 
 import './App.css';
 
@@ -155,6 +160,11 @@ function App() {
             <Route path="/student/mock-tests/:id/result" element={<ProtectedRoute><MockTestResultPage /></ProtectedRoute>} />
             {/* ── Notifications (student) ── */}
             <Route path="/student/notifications"      element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
+            {/* ── Profile ── */}
+            <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+            {/* ── AI HR Interview ── */}
+            <Route path="/hr-prep/live-interview"    element={<ProtectedRoute><LiveInterviewPage /></ProtectedRoute>} />
+            <Route path="/hr-prep/interview-history" element={<ProtectedRoute><InterviewHistoryPage /></ProtectedRoute>} />
 
             {/* ── 404 ── */}
             <Route path="*" element={<Navigate to="/home" replace />} />

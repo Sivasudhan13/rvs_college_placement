@@ -95,4 +95,43 @@ export const roadmapAPI = {
   updateStepStatus: (data) => api.patch('/roadmap/step', data),
 };
 
+/* ════════════════════════════════════════
+   PROFILE  (new)
+════════════════════════════════════════ */
+// Separate axios instance that sends multipart/form-data for uploads
+const uploadApi = axios.create({
+  baseURL:         BASE_URL,
+  withCredentials: true,
+});
+uploadApi.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+export const profileAPI = {
+  get:                ()         => api.get('/profile'),
+  update:             (data)     => api.put('/profile', data),
+  uploadPhoto:        (formData) => uploadApi.post('/profile/photo',       formData),
+  deletePhoto:        ()         => api.delete('/profile/photo'),
+  uploadCertificate:  (formData) => uploadApi.post('/profile/certificate', formData),
+  deleteCertificate:  ()         => api.delete('/profile/certificate'),
+};
+
+/* ════════════════════════════════════════
+   AI HR INTERVIEW  (new)
+════════════════════════════════════════ */
+export const interviewAPI = {
+  start:      (data)   => api.post('/interview/start',       data),
+  answer:     (id, data) => api.post(`/interview/${id}/answer`,    data),
+  complete:   (id, data) => api.post(`/interview/${id}/complete`,  data),
+  evaluate:   (id)     => api.post(`/interview/${id}/evaluate`),
+  getHistory: (params) => api.get('/interview/history',      { params }),
+  getSession: (id)     => api.get(`/interview/${id}`),
+  adminStats: ()       => api.get('/interview/admin/stats'),
+  getAutoListenConfig:   ()       => api.get('/interview/auto-listen/config'),
+  processTranscript:     (data)   => api.post('/interview/auto-listen/process', data),
+  getAutoListenFunctions:()       => api.get('/interview/auto-listen/functions'),
+};
+
 export default api;

@@ -8,19 +8,23 @@ const { sendWelcomeEmail } = require('../services/emailService');
    POST /api/auth/register
 ───────────────────────────────────────── */
 exports.register = asyncHandler(async (req, res, next) => {
-  const { name, email, studentId, admissionNumber, department, password, batch } = req.body;
+  const { name, email, studentId, idCardNumber, admissionNumber, phoneNumber, department, password, batch } = req.body;
 
   const existing = await User.findOne({ $or: [{ email }, { studentId }] });
   if (existing) {
     return next(new ApiError('Email or Student ID already registered', 400));
   }
 
+  const cardNum = idCardNumber || admissionNumber || '';
+
   const user = await User.create({
-    name, email, studentId, admissionNumber,
+    name, email, studentId,
+    idCardNumber:    cardNum,
+    admissionNumber: cardNum,
+    phoneNumber:     phoneNumber || '',
     department, password, batch: batch || '',
   });
 
-  // Send welcome email — non-blocking, never fails the registration
   sendWelcomeEmail(user).catch((err) =>
     console.error('[EMAIL] Welcome email failed for', user.email, ':', err.message)
   );
@@ -67,16 +71,21 @@ exports.getMe = asyncHandler(async (req, res) => {
    PUT /api/auth/me   (protected)
 ───────────────────────────────────────── */
 exports.updateMe = asyncHandler(async (req, res, next) => {
-  const allowed = ['name', 'email', 'department', 'bio', 'avatar'];
+  const allowed = [
+    'name', 'email', 'department', 'bio', 'avatar',
+    'idCardNumber', 'phoneNumber', 'fatherName', 'motherName',
+    'occupation', 'cgpa', 'batch', 'year', 'section', 'interestedDomain',
+  ];
   const updates = {};
   allowed.forEach((field) => {
     if (req.body[field] !== undefined) updates[field] = req.body[field];
   });
-
+  if (updates.idCardNumber !== undefined) {
+    updates.admissionNumber = updates.idCardNumber;
+  }
   const user = await User.findByIdAndUpdate(req.user.id, updates, {
     new: true, runValidators: true,
   });
-
   res.status(200).json({ success: true, user });
 });
 

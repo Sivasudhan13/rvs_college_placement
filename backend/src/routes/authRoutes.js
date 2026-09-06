@@ -10,10 +10,13 @@ const validate    = require('../middleware/validate');
 // Validators
 const registerRules = [
   body('name').trim().notEmpty().withMessage('Name is required'),
-  body('email').isEmail({ allow_utf8_local_part: false }).normalizeEmail({ gmail_remove_dots: false, gmail_remove_subaddress: false }).withMessage('Valid email required'),
+  body('email').isEmail({ allow_utf8_local_part: false })
+    .normalizeEmail({ gmail_remove_dots: false, gmail_remove_subaddress: false })
+    .withMessage('Valid email required'),
   body('studentId').trim().notEmpty().withMessage('Student ID is required'),
   body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
-  body('department').optional().isIn(['cse','ece','eee','me','ce','mba','mca','civil','it','other']),
+  body('phoneNumber').optional().matches(/^[0-9+\-\s()]{7,15}$/).withMessage('Invalid phone number'),
+  body('department').optional().isIn(['cse','ece','eee','me','ce','it','mca','mba','other']),
 ];
 
 const loginRules = [

@@ -91,6 +91,7 @@ const companies = [
 const HRPrepPage = () => {
   const [activeTab, setActiveTab] = useState('questions');
   const [expanded, setExpanded]   = useState(null);
+  const navigate = useNavigate();
 
   return (
     <DashboardLayout>
@@ -103,11 +104,12 @@ const HRPrepPage = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-gray-200 mb-7">
+      <div className="flex gap-1 border-b border-gray-200 mb-7 flex-wrap">
         {[
-          { id: 'questions', label: 'Question Bank' },
-          { id: 'star',      label: 'STAR Answers'  },
-          { id: 'companies', label: 'Company Guides' },
+          { id: 'questions',      label: 'Question Bank'    },
+          { id: 'star',           label: 'STAR Answers'     },
+          { id: 'companies',      label: 'Company Guides'   },
+          { id: 'live-interview', label: '🎤 Live Interview' },
         ].map((t) => (
           <button
             key={t.id}
@@ -239,6 +241,72 @@ const HRPrepPage = () => {
               </button>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* ══ LIVE INTERVIEW ══ */}
+      {activeTab === 'live-interview' && (
+        <div className="max-w-2xl space-y-5">
+          {/* Hero card */}
+          <div className="bg-gradient-to-br from-[#0c5273] to-[#0a3d55] rounded-2xl p-8 text-white text-center space-y-4">
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                <rect x="9" y="2" width="6" height="12" rx="3" stroke="white" strokeWidth="1.8"/>
+                <path d="M5 10a7 7 0 0 0 14 0M12 19v4M8 23h8" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+              </svg>
+            </div>
+            <h2 className="text-xl font-bold">AI Live Mock Interview</h2>
+            <p className="text-white/80 text-sm leading-relaxed">
+              Practice with Google Gemini AI as your HR interviewer. Get role-specific questions, speak your answers,
+              and receive a detailed evaluation with scores and feedback.
+            </p>
+            <div className="flex flex-wrap justify-center gap-2 text-xs">
+              {['Voice-enabled','Gemini AI','Real-time feedback','7 score dimensions'].map(f => (
+                <span key={f} className="bg-white/20 px-3 py-1 rounded-full font-medium">{f}</span>
+              ))}
+            </div>
+            <button
+              onClick={() => navigate('/hr-prep/live-interview')}
+              className="inline-flex items-center gap-2 bg-white text-[#0c5273] font-bold px-6 py-3 rounded-xl hover:bg-gray-100 transition-colors text-sm"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/>
+              </svg>
+              Start Live Interview
+            </button>
+          </div>
+
+          {/* Features */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              { icon:'🎤', title:'Voice Recognition',  desc:'Speak your answers naturally. Speech is converted to text in real-time.' },
+              { icon:'🤖', title:'Gemini AI Questions', desc:'Questions are generated based on your specific job role and description.' },
+              { icon:'⏱️', title:'Timed Interview',     desc:'Choose 5–30 minute sessions. Timer auto-submits when time is up.' },
+              { icon:'📊', title:'AI Evaluation',       desc:'Get scored on 7 dimensions: communication, fluency, role knowledge and more.' },
+            ].map(f => (
+              <div key={f.title} className="bg-white border border-gray-200 rounded-xl p-4 flex gap-3">
+                <span className="text-2xl flex-shrink-0">{f.icon}</span>
+                <div>
+                  <p className="text-sm font-bold text-gray-800">{f.title}</p>
+                  <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{f.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* History link */}
+          <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold text-gray-800">Past Interviews</p>
+              <p className="text-xs text-gray-500 mt-0.5">View your previous mock interviews and scores</p>
+            </div>
+            <button
+              onClick={() => navigate('/hr-prep/interview-history')}
+              className="text-sm text-[#0c5273] font-semibold border border-[#0c5273] px-4 py-2 rounded-lg hover:bg-[#0c5273]/5 transition-colors whitespace-nowrap"
+            >
+              View History →
+            </button>
+          </div>
         </div>
       )}
     </DashboardLayout>

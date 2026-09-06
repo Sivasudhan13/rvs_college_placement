@@ -1,24 +1,27 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authAPI } from '../services/api';
+import { sessionStore } from '../utils/sessionStore';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user,    setUser]    = useState(() => {
-    try { return JSON.parse(localStorage.getItem('user')) || null; }
-    catch { return null; }
-  });
-  const [token,   setToken]   = useState(() => localStorage.getItem('token') || null);
+  const [user,    setUser]    = useState(null);
+  const [token,   setToken]   = useState(null);
   const [loading, setLoading] = useState(true);
 
   /* ── Verify token on mount ── */
   useEffect(() => {
-    const verify = async () => {
-      if (!token) { setLoading(false); return; }
+    const bootstrap = async () => {
+      await sessionStore.hydrate();
+      const { token: storedToken, user: cachedUser } = await sessionStore.getSession();
+      setToken(storedToken);
+      setUser(cachedUser);
+
+      if (!storedToken) { setLoading(false); return; }
       try {
         const { data } = await authAPI.getMe();
         setUser(data.user);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        await sessionStore.setUser(data.user);
       } catch (err) {
         // Only clear session on explicit 401 (invalid/expired token).
         // Do NOT clear on network errors (CORS, server down, etc.)
@@ -27,23 +30,21 @@ export const AuthProvider = ({ children }) => {
         if (status === 401 || status === 403) {
           setUser(null);
           setToken(null);
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
+          await sessionStore.clearSession();
         }
         // For any other error (network, 500, CORS null) keep the cached user
       } finally {
         setLoading(false);
       }
     };
-    verify();
+    bootstrap();
   }, []); // run once on mount
 
   const login = useCallback(async (credentials) => {
     const { data } = await authAPI.login(credentials);
     setToken(data.token);
     setUser(data.user);
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user',  JSON.stringify(data.user));
+    await sessionStore.setSession({ token: data.token, user: data.user });
     return data;
   }, []);
 
@@ -51,8 +52,7 @@ export const AuthProvider = ({ children }) => {
     const { data } = await authAPI.register(formData);
     setToken(data.token);
     setUser(data.user);
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user',  JSON.stringify(data.user));
+    await sessionStore.setSession({ token: data.token, user: data.user });
     return data;
   }, []);
 
@@ -60,13 +60,12 @@ export const AuthProvider = ({ children }) => {
     try { await authAPI.logout(); } catch { /* ignore */ }
     setUser(null);
     setToken(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    await sessionStore.clearSession();
   }, []);
 
   const updateUser = useCallback((updated) => {
     setUser(updated);
-    localStorage.setItem('user', JSON.stringify(updated));
+    return sessionStore.setUser(updated);
   }, []);
 
   return (

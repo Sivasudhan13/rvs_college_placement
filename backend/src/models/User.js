@@ -1,61 +1,93 @@
-const mongoose = require('mongoose');
-const bcrypt   = require('bcryptjs');
-const jwt      = require('jsonwebtoken');
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const UserSchema = new mongoose.Schema(
   {
     name: {
-      type: String, required: [true, 'Name is required'], trim: true, maxlength: [80, 'Name cannot exceed 80 characters'],
+      type: String,
+      required: [true, "Name is required"],
+      trim: true,
+      maxlength: [80, "Name cannot exceed 80 characters"],
     },
     email: {
-      type: String, required: [true, 'Email is required'], unique: true,
-      match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/, 'Please provide a valid email'],
-      lowercase: true, trim: true,
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      match: [
+        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/,
+        "Please provide a valid email",
+      ],
+      lowercase: true,
+      trim: true,
     },
     studentId: {
-      type: String, required: [true, 'Student/Faculty ID is required'], unique: true, trim: true,
+      type: String,
+      required: [true, "Student/Faculty ID is required"],
+      unique: true,
+      trim: true,
     },
-    admissionNumber: { type: String, trim: true },
+    // idCardNumber replaces admissionNumber (admissionNumber kept as alias)
+    idCardNumber: { type: String, trim: true, default: "" },
+    admissionNumber: { type: String, trim: true, default: "" }, // legacy alias
+    phoneNumber: { type: String, trim: true, default: "" },
+    fatherName: { type: String, trim: true, default: "" },
+    motherName: { type: String, trim: true, default: "" },
+    occupation: { type: String, trim: true, default: "" },
+    cgpa: { type: Number, default: null },
+    photoCertificate: { type: String, default: "" }, // Legacy primary certificate URL
+    certificates: {
+      type: [String],
+      default: [],
+    },
     password: {
-      type: String, required: [true, 'Password is required'], minlength: [8, 'Password must be at least 8 characters'], select: false,
+      type: String,
+      required: [true, "Password is required"],
+      minlength: [8, "Password must be at least 8 characters"],
+      select: false,
     },
     department: {
       type: String,
-      enum: ['cse', 'ece', 'eee', 'me', 'ce', 'other'],
-      default: 'cse',
+      enum: ["cse", "ece", "eee", "me", "ce", "it", "mca", "mba", "other"],
+      default: "cse",
     },
     batch: {
       type: String,
       trim: true,
-      default: '',
+      default: "",
       // e.g. "2023-2027", "2022-2026"
     },
-    role: { type: String, enum: ['student', 'faculty', 'admin'], default: 'student' },
-    avatar: { type: String, default: '' },
-    bio: { type: String, maxlength: 300, default: '' },
-    resetPasswordToken:   String,
-    resetPasswordExpire:  Date,
+    role: {
+      type: String,
+      enum: ["student", "faculty", "admin"],
+      default: "student",
+    },
+    avatar: { type: String, default: "" },
+    bio: { type: String, maxlength: 300, default: "" },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
     // Mobile + extended profile
-    mobile:    { type: String, default: '' },
-    year:      { type: Number, default: null },
-    section:   { type: String, default: '' },
+    mobile: { type: String, default: "" },
+    year: { type: Number, default: null },
+    section: { type: String, default: "" },
+    interestedDomain: { type: String, trim: true, default: "" },
     lastLogin: Date,
-    isActive:  { type: Boolean, default: true },
+    isActive: { type: Boolean, default: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 /* ── Hash password before save ── */
-UserSchema.pre('save', async function () {
-  if (!this.isModified('password')) return;
+UserSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
 
 /* ── Sign JWT ── */
 UserSchema.methods.getSignedJwtToken = function () {
-  const secret  = process.env.JWT_SECRET  || 'fallback_dev_secret_change_in_prod';
-  const expires = process.env.JWT_EXPIRE  || '7d';   // safe default if env var missing
+  const secret = process.env.JWT_SECRET || "fallback_dev_secret_change_in_prod";
+  const expires = process.env.JWT_EXPIRE || "7d"; // safe default if env var missing
   return jwt.sign({ id: this._id, role: this.role }, secret, {
     expiresIn: expires,
   });
@@ -66,4 +98,4 @@ UserSchema.methods.matchPassword = async function (enteredPassword) {
   return bcrypt.compare(enteredPassword, this.password);
 };
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model("User", UserSchema);

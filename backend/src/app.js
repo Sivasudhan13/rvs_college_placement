@@ -23,6 +23,8 @@ const attendanceRoutes= require('./routes/attendanceRoutes');
 const placementRoutes     = require('./routes/placementRoutes');
 const mockTestRoutes      = require('./routes/mockTestRoutes');
 const notificationRoutes  = require('./routes/notificationRoutes');
+const profileRoutes       = require('./routes/profileRoutes');
+const interviewRoutes     = require('./routes/interviewRoutes');
 
 /* ── Connect DB ── */
 connectDB();
@@ -188,6 +190,8 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api/placement',      placementRoutes);
 app.use('/api/mock-tests',     mockTestRoutes);
 app.use('/api/notifications',  notificationRoutes);
+app.use('/api/profile',        profileRoutes);
+app.use('/api/interview',      interviewRoutes);
 
 /* ── 404 handler ── */
 app.use((req, res) => {
